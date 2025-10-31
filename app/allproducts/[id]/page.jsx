@@ -340,47 +340,6 @@ const Page = () => {
           </div>
         </div>
       </div>
-
-     
-      <footer className="bg-gray-800 text-white py-12 mt-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-4">Shop<span className="text-purple-400">Easy</span></h3>
-              <p className="text-gray-400">Your one-stop destination for all your shopping needs.</p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link href="/" className="hover:text-white">Home</Link></li>
-                <li><Link href="/shop" className="hover:text-white">Shop</Link></li>
-                <li><Link href="/about" className="hover:text-white">About</Link></li>
-                <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Customer Service</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><Link href="/faq" className="hover:text-white">FAQ</Link></li>
-                <li><Link href="/shipping" className="hover:text-white">Shipping</Link></li>
-                <li><Link href="/returns" className="hover:text-white">Returns</Link></li>
-                <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>📧 support@shopeasy.com</li>
-                <li>📞 1-800-SHOP-EASY</li>
-                <li>📍 123 Commerce St, City, State</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 ShopEasy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
