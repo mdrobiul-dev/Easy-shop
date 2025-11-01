@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function ProductsPage() {
   const [sortBy, setSortBy] = useState("featured");
   const [filterCategory, setFilterCategory] = useState("all");
-  const [apiproduct, setapiproduct] = useState(null)
+  const [apiproduct, setapiproduct] = useState(null);
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -119,24 +119,21 @@ export default function ProductsPage() {
     },
   ];
 
-
-
-useEffect(() => {
-  (async() => {
+  useEffect(() => {
+    (async () => {
       try {
-        const res = await fetch("https://api.freeapi.app/api/v1/public/randomproducts")
-        const products = await res.json()
-        setapiproduct(products.data.data)
-        
+        const res = await fetch(
+          "https://api.freeapi.app/api/v1/public/randomproducts"
+        );
+        const products = await res.json();
+        setapiproduct(products.data.data);
       } catch (error) {
-         console.log(error);
-         
+        console.log(error);
       }
-  })()
-},[])
+    })();
+  }, []);
 
-console.log(apiproduct);
-
+  console.log(apiproduct);
 
   const categories = [
     { name: "All", value: "all", count: products.length },
