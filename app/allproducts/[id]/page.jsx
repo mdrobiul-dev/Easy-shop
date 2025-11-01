@@ -59,7 +59,7 @@ const Page = () => {
       name: "Noise Cancelling Earbuds",
       price: "$79.99",
       image:
-        "https://images.unsplash.com/photo-1590658165737-15a047b8b5e3?w=300&h=300&fit=crop",
+        "https://images.unsplash.com/photo-1599669454699-248893623440?w=300&h=300&fit=crop",
       category: "Electronics",
     },
     {
