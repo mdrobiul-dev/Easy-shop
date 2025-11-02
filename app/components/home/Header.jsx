@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { useState } from 'react'
 
 const Header = ({cartCount}) => {
@@ -8,43 +9,45 @@ const Header = ({cartCount}) => {
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-purple-600">
-                Shop<span className="text-purple-800">Easy</span>
-              </h1>
+              <Link href="/" className="flex items-center">
+                <h1 className="text-2xl font-bold text-purple-600">
+                  Shop<span className="text-purple-800">Easy</span>
+                </h1>
+              </Link>
             </div>
 
             {/* Navigation - Desktop */}
             <nav className="hidden md:flex space-x-8">
-              <a
-                href="#"
+              <Link
+                href="/"
                 className="text-gray-700 hover:text-purple-600 font-medium"
               >
                 Home
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/allproducts"
                 className="text-gray-700 hover:text-purple-600 font-medium"
               >
-                Categories
-              </a>
-              <a
-                href="#"
+                Products
+              </Link>
+              <Link
+                href="/deals"
                 className="text-gray-700 hover:text-purple-600 font-medium"
               >
                 Deals
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/about"
                 className="text-gray-700 hover:text-purple-600 font-medium"
               >
                 About
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/contact"
                 className="text-gray-700 hover:text-purple-600 font-medium"
               >
                 Contact
-              </a>
+              </Link>
             </nav>
 
             {/* Header Actions */}
@@ -61,11 +64,17 @@ const Header = ({cartCount}) => {
                 </button>
               </div>
 
-              {/* Icons */}
-              <div className="flex space-x-4">
+              {/* Icons - UPDATED SECTION */}
+              <div className="flex items-center space-x-4">
                 <button className="text-gray-700 hover:text-purple-600">
-                  👤
+                  🔍
                 </button>
+                
+                {/* Replace the user icon with actual auth links */}
+                <Link href="/auth/login" className="text-gray-700 hover:text-purple-600">
+                  👤
+                </Link>
+                
                 <button className="text-gray-700 hover:text-purple-600 relative">
                   🛒
                   {cartCount > 0 && (
@@ -90,36 +99,43 @@ const Header = ({cartCount}) => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col space-y-4">
-                <a
-                  href="#"
+                <Link
+                  href="/"
                   className="text-gray-700 hover:text-purple-600 font-medium"
                 >
                   Home
-                </a>
-                <a
-                  href="#"
+                </Link>
+                <Link
+                  href="/allproducts"
                   className="text-gray-700 hover:text-purple-600 font-medium"
                 >
-                  Categories
-                </a>
-                <a
-                  href="#"
+                  Products
+                </Link>
+                <Link
+                  href="/deals"
                   className="text-gray-700 hover:text-purple-600 font-medium"
                 >
                   Deals
-                </a>
-                <a
-                  href="#"
+                </Link>
+                <Link
+                  href="/about"
                   className="text-gray-700 hover:text-purple-600 font-medium"
                 >
                   About
-                </a>
-                <a
-                  href="#"
+                </Link>
+                <Link
+                  href="/contact"
                   className="text-gray-700 hover:text-purple-600 font-medium"
                 >
                   Contact
-                </a>
+                </Link>
+                {/* Add auth links to mobile menu too */}
+                <Link
+                  href="/auth/login"
+                  className="text-gray-700 hover:text-purple-600 font-medium"
+                >
+                  Sign In
+                </Link>
                 <div className="relative">
                   <input
                     type="text"

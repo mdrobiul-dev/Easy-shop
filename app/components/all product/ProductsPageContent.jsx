@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ProductFilters } from "../../components/all product/ProductFilters";
-import { ProductsGrid } from "../../components/all product/ProductsGrid";
-import { SortAndFilterBar } from "../../components/all product/SortAndFilterBar";
+import { ProductFilters } from "./ProductFilters";
+import { ProductsGrid } from "./ProductsGrid";
+import { SortAndFilterBar } from "./SortAndFilterBar";
 import { filterAndSortProducts } from "../../data/allproductsdata";
 
-export function ProductsPageContent({ initialProducts, categories }) {
+export function ProductsPageContent({ initialProducts, categories, currentLimit = "20" }) {
   const [sortBy, setSortBy] = useState("featured");
   const [filters, setFilters] = useState({
     category: "all",
@@ -18,15 +18,7 @@ export function ProductsPageContent({ initialProducts, categories }) {
   const filteredProducts = filterAndSortProducts(initialProducts, filters, sortBy);
 
   const addToCart = (product) => {
-    alert(`Added ${product.name} to cart!`);
-  };
-
-  const handleClearFilters = () => {
-    setFilters({
-      category: "all",
-      priceRange: [0, 500],
-      inStockOnly: false
-    });
+    alert(`Added ${product.title} to cart!`);
   };
 
   return (
@@ -37,6 +29,7 @@ export function ProductsPageContent({ initialProducts, categories }) {
         productCount={filteredProducts.length}
         showFilters={showFilters}
         onToggleFilters={() => setShowFilters(!showFilters)}
+        currentLimit={currentLimit}
       />
 
       <div className="flex gap-8">
