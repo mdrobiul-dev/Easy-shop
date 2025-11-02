@@ -6,67 +6,70 @@ import Link from "next/link";
 async function getProduct(id) {
   try {
     const res = await fetch(`https://dummyjson.com/products/${id}`, {
-      next: { revalidate: 3600 } // Revalidate every hour
+      next: { revalidate: 3600 }, // Revalidate every hour
     });
-    
+
     // console.log('Fetching product with ID:', id);
-    
+
     if (!res.ok) {
       if (res.status === 404) {
         return null;
       }
-      throw new Error('Failed to fetch product');
+      throw new Error("Failed to fetch product");
     }
-    
+
     return res.json();
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error("Error fetching product:", error);
     return null;
   }
 }
 
 async function getRelatedProducts(category, currentProductId) {
   try {
-    const res = await fetch(`https://dummyjson.com/products/category/${category}`, {
-      next: { revalidate: 3600 }
-    });
+    const res = await fetch(
+      `https://dummyjson.com/products/category/${category}`,
+      {
+        next: { revalidate: 3600 },
+      }
+    );
     const data = await res.json();
-    
-   
+
     return data.products
-      .filter(product => product.id !== currentProductId)
+      .filter((product) => product.id !== currentProductId)
       .slice(0, 3);
   } catch (error) {
-    console.error('Error fetching related products:', error);
+    console.error("Error fetching related products:", error);
     return [];
   }
 }
 
-
 export default async function ProductDetailsPage({ params }) {
-  
   const { id } = await params;
-  
+
   // console.log('Received product ID:', id);
 
   const product = await getProduct(id);
-  
+
   if (!product) {
     notFound();
   }
 
-  const relatedProducts = await getRelatedProducts(product.category, product.id);
+  const relatedProducts = await getRelatedProducts(
+    product.category,
+    product.id
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <Breadcrumb product={product} />
-      
+
       <div className="container mx-auto px-4 py-8">
         <Suspense fallback={<ProductDetailsSkeleton />}>
-          <ProductDetailsContent 
-            product={product} 
-            relatedProducts={relatedProducts} 
+          <ProductDetailsContent
+            product={product}
+            relatedProducts={relatedProducts}
           />
         </Suspense>
       </div>
@@ -86,23 +89,34 @@ function Header() {
             </h1>
           </Link>
           <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-purple-600 font-medium">
+            <Link
+              href="/"
+              className="text-gray-700 hover:text-purple-600 font-medium"
+            >
               Home
             </Link>
             <Link href="/allproducts" className="text-purple-600 font-medium">
               Products
             </Link>
-            <Link href="/categories" className="text-gray-700 hover:text-purple-600 font-medium">
+            <Link
+              href="/categories"
+              className="text-gray-700 hover:text-purple-600 font-medium"
+            >
               Categories
             </Link>
-            <Link href="/deals" className="text-gray-700 hover:text-purple-600 font-medium">
+            <Link
+              href="/deals"
+              className="text-gray-700 hover:text-purple-600 font-medium"
+            >
               Deals
             </Link>
           </nav>
           <div className="flex items-center space-x-4">
             <button className="text-gray-700 hover:text-purple-600">🔍</button>
             <button className="text-gray-700 hover:text-purple-600">👤</button>
-            <button className="text-gray-700 hover:text-purple-600 relative">🛒</button>
+            <button className="text-gray-700 hover:text-purple-600 relative">
+              🛒
+            </button>
           </div>
         </div>
       </div>
@@ -114,11 +128,17 @@ function Breadcrumb({ product }) {
   return (
     <div className="container mx-auto px-4 py-4">
       <nav className="flex text-sm text-gray-500">
-        <Link href="/" className="hover:text-purple-600">Home</Link>
+        <Link href="/" className="hover:text-purple-600">
+          Home
+        </Link>
         <span className="mx-2">/</span>
-        <Link href="/allproducts" className="hover:text-purple-600">Products</Link>
+        <Link href="/allproducts" className="hover:text-purple-600">
+          Products
+        </Link>
         <span className="mx-2">/</span>
-        <span className="text-gray-900 truncate capitalize">{product.category}</span>
+        <span className="text-gray-900 truncate capitalize">
+          {product.category}
+        </span>
         <span className="mx-2">/</span>
         <span className="text-gray-900 truncate">{product.title}</span>
       </nav>
@@ -134,7 +154,10 @@ function ProductDetailsSkeleton() {
           <div className="aspect-square bg-gray-200 rounded-lg animate-pulse"></div>
           <div className="grid grid-cols-4 gap-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="aspect-square bg-gray-200 rounded-md animate-pulse"></div>
+              <div
+                key={i}
+                className="aspect-square bg-gray-200 rounded-md animate-pulse"
+              ></div>
             ))}
           </div>
         </div>
