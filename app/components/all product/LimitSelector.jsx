@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 export function LimitSelector({ currentLimit = "20" }) {
   const router = useRouter();
-  
+
   const handleLimitChange = (e) => {
     const newLimit = e.target.value;
     // Update the URL with the new limit parameter
