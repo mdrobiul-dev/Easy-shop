@@ -6,16 +6,24 @@ import { ProductsGrid } from "./ProductsGrid";
 import { SortAndFilterBar } from "./SortAndFilterBar";
 import { filterAndSortProducts } from "../../data/allproductsdata";
 
-export function ProductsPageContent({ initialProducts, categories, currentLimit = "20" }) {
+export function ProductsPageContent({
+  initialProducts,
+  categories,
+  currentLimit = "20",
+}) {
   const [sortBy, setSortBy] = useState("featured");
   const [filters, setFilters] = useState({
     category: "all",
     priceRange: [0, 500],
-    inStockOnly: false
+    inStockOnly: false,
   });
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredProducts = filterAndSortProducts(initialProducts, filters, sortBy);
+  const filteredProducts = filterAndSortProducts(
+    initialProducts,
+    filters,
+    sortBy
+  );
 
   const addToCart = (product) => {
     alert(`Added ${product.title} to cart!`);
@@ -44,10 +52,7 @@ export function ProductsPageContent({ initialProducts, categories, currentLimit 
 
         {/* Products Grid */}
         <div className="flex-1">
-          <ProductsGrid 
-            products={filteredProducts} 
-            onAddToCart={addToCart} 
-          />
+          <ProductsGrid products={filteredProducts} onAddToCart={addToCart} />
         </div>
       </div>
     </>
