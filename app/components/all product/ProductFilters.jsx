@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 
-export function ProductFilters({ 
-  categories, 
-  onFilterChange, 
-  initialFilters = {} 
+export function ProductFilters({
+  categories,
+  onFilterChange,
+  initialFilters = {},
 }) {
   const [filters, setFilters] = useState({
     category: initialFilters.category || "all",
     priceRange: initialFilters.priceRange || [0, 500],
-    inStockOnly: initialFilters.inStockOnly || false
+    inStockOnly: initialFilters.inStockOnly || false,
   });
 
   const handleFilterChange = (newFilters) => {
@@ -28,7 +28,7 @@ export function ProductFilters({
             const resetFilters = {
               category: "all",
               priceRange: [0, 500],
-              inStockOnly: false
+              inStockOnly: false,
             };
             setFilters(resetFilters);
             onFilterChange(resetFilters);
@@ -52,7 +52,9 @@ export function ProductFilters({
 
       <AvailabilityFilter
         inStockOnly={filters.inStockOnly}
-        onAvailabilityChange={(inStockOnly) => handleFilterChange({ inStockOnly })}
+        onAvailabilityChange={(inStockOnly) =>
+          handleFilterChange({ inStockOnly })
+        }
       />
     </div>
   );
