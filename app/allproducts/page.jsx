@@ -6,37 +6,31 @@ import { LimitSelector } from "../components/all product/LimitSelector";
 async function getProducts(limit = 20) {
   try {
     const res = await fetch(`https://dummyjson.com/products?limit=${limit}`, {
-     
-      next: { revalidate: 3600 }, 
+      next: { revalidate: 3600 },
     });
     const data = await res.json();
 
-    
     return data.products || [];
   } catch (error) {
     console.error("Error fetching products:", error);
-    return []; 
+    return [];
   }
 }
 
-
 async function getCategories(products) {
-
   const categoryCounts = products.reduce((acc, product) => {
     acc[product.category] = (acc[product.category] || 0) + 1;
     return acc;
   }, {});
 
- 
   return Object.entries(categoryCounts).map(([category, count]) => ({
-    name: category.charAt(0).toUpperCase() + category.slice(1), 
+    name: category.charAt(0).toUpperCase() + category.slice(1),
     value: category.toLowerCase(),
     count: count,
   }));
 }
 
 export default async function ProductsPage({ searchParams }) {
- 
   const params = await searchParams;
   const limit = params.limit || "20";
 
