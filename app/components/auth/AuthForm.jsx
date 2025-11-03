@@ -2,32 +2,83 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export function AuthForm({ type = "login", onSubmit }) {
+export function AuthForm({ type = "login" }) {
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
-    firstName: "",
-    lastName: "",
-    confirmPassword: ""
+    role: "USER" 
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+   
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+    setError("");
+
     try {
-      await onSubmit(formData);
+      let apiUrl, requestBody;
+
+      if (type === "login") {
+    
+        apiUrl = "https://api.freeapi.app/api/v1/users/login";
+        requestBody = {
+          username: formData.username,
+          password: formData.password
+        };
+      } else {
+    
+        apiUrl = "https://api.freeapi.app/api/v1/users/register";
+        requestBody = {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role
+        };
+      }
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+     
+        if (type === "login") {
+          alert("Login successful! Redirecting...");
+         
+      
+          router.push("/");
+          router.refresh(); 
+        } else {
+          alert("Registration successful! Please login.");
+          router.push("/auth/login");
+        }
+      } else {
+      
+        throw new Error(data.message || `Failed to ${type}`);
+      }
     } catch (error) {
       console.error('Auth error:', error);
+      setError(error.message || `Something went wrong during ${type}`);
     } finally {
       setIsLoading(false);
     }
@@ -37,57 +88,50 @@ export function AuthForm({ type = "login", onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {!isLogin && (
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-              First Name
-            </label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              required={!isLogin}
-              value={formData.firstName}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
-              placeholder="John"
-            />
-          </div>
-          <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-              Last Name
-            </label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              required={!isLogin}
-              value={formData.lastName}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
-              placeholder="Doe"
-            />
-          </div>
+   
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+          {error}
         </div>
       )}
 
+
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-          Email Address
+        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+          Username
         </label>
         <input
-          id="email"
-          name="email"
-          type="email"
+          id="username"
+          name="username"
+          type="text"
           required
-          value={formData.email}
+          value={formData.username}
           onChange={handleChange}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
-          placeholder="you@example.com"
+          placeholder="Enter your username"
         />
       </div>
 
+    
+      {!isLogin && (
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            Email Address
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required={!isLogin}
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+            placeholder="you@example.com"
+          />
+        </div>
+      )}
+
+   
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
           Password
@@ -105,22 +149,22 @@ export function AuthForm({ type = "login", onSubmit }) {
         />
       </div>
 
+      
       {!isLogin && (
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-            Confirm Password
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+            Role
           </label>
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            required={!isLogin}
-            value={formData.confirmPassword}
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
             onChange={handleChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
-            placeholder="••••••••"
-            minLength={6}
-          />
+          >
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+          </select>
         </div>
       )}
 
