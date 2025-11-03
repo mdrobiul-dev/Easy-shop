@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser, logoutUser } from '../components/auth/actions';
+import { createContext, useContext, useState, useEffect } from "react";
+import { getCurrentUser, logoutUser } from "../components/auth/actions";
 
 const AuthContext = createContext();
 
@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
         setUser(null);
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error("Auth check failed:", error);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -32,22 +32,25 @@ export function AuthProvider({ children }) {
 
   const login = async (username, password) => {
     try {
-      const response = await fetch('https://api.freeapi.app/api/v1/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await fetch(
+        "https://api.freeapi.app/api/v1/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        }
+      );
 
       if (response.ok) {
         // The API sets cookies automatically
-        await checkAuth(); 
+        await checkAuth();
         return true;
       }
       return false;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
       return false;
     }
   };
@@ -56,20 +59,22 @@ export function AuthProvider({ children }) {
     try {
       await logoutUser();
       setUser(null);
-      window.location.href = '/';
+      window.location.href = "/";
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isLoading,
-      login,
-      logout,
-      checkAuth
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        login,
+        logout,
+        checkAuth,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -78,7 +83,7 @@ export function AuthProvider({ children }) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
