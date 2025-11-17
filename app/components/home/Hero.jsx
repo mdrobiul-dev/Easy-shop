@@ -1,9 +1,7 @@
-import React from 'react'
-
 const Hero = () => {
   return (
-    <section className="bg-linear-to-r from-purple-600 to-purple-800 text-white py-20">
-        <div className="container mx-auto px-4">
+    <section className="bg-linear-to-r bg-[url('/images/banner.jpg')] bg-cover bg-position-[center_20%] bg-no-repeat  text-white py-30">
+        <div className="container mx-auto px-">
           <div className="max-w-2xl">
             <h1 className="text-5xl font-bold mb-6">Summer Sale is Live!</h1>
             <p className="text-xl mb-8 text-purple-100">

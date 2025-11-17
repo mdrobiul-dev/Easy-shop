@@ -1,3 +1,4 @@
+import { Search, User, ShoppingCart } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductDetailsContent } from "../../components/product-details/ProductDetailsContent";
@@ -6,7 +7,7 @@ import Link from "next/link";
 async function getProduct(id) {
   try {
     const res = await fetch(`https://dummyjson.com/products/${id}`, {
-      next: { revalidate: 3600 }, // Revalidate every hour
+      next: { revalidate: 3600 },
     });
 
     // console.log('Fetching product with ID:', id);
@@ -77,7 +78,6 @@ export default async function ProductDetailsPage({ params }) {
   );
 }
 
-// Server components for static parts
 function Header() {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -112,11 +112,20 @@ function Header() {
             </Link>
           </nav>
           <div className="flex items-center space-x-4">
-            <button className="text-gray-700 hover:text-purple-600">🔍</button>
-            <button className="text-gray-700 hover:text-purple-600">👤</button>
-            <button className="text-gray-700 hover:text-purple-600 relative">
-              🛒
+            <button className="text-gray-700 hover:text-purple-600">
+              {" "}
+              <Search />
             </button>
+            <Link href="/auth/login">
+              <button className="text-gray-700 hover:text-purple-600">
+                <User />
+              </button>
+            </Link>
+            <Link href="/cart">
+              <button className="text-gray-700 hover:text-purple-600 relative">
+                <ShoppingCart />
+              </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
+import { Search, User, ShoppingCart } from "lucide-react";
 import { Suspense } from "react";
 import Link from "next/link";
 import { ProductsPageContent } from "../components/all product/ProductsPageContent";
-import { LimitSelector } from "../components/all product/LimitSelector";
 
 async function getProducts(limit = 20) {
   try {
@@ -139,11 +139,20 @@ function Header() {
             </Link>
           </nav>
           <div className="flex items-center space-x-4">
-            <button className="text-gray-700 hover:text-purple-600">🔍</button>
-            <button className="text-gray-700 hover:text-purple-600">👤</button>
-            <button className="text-gray-700 hover:text-purple-600 relative">
-              🛒
+            <button className="text-gray-700 hover:text-purple-600">
+              <Search />
             </button>
+
+            <Link href="/auth/login">
+              <button className="text-gray-700 hover:text-purple-600">
+                <User />
+              </button>
+            </Link>
+            <Link href="/cart">
+              <button className="text-gray-700 hover:text-purple-600 relative">
+                <ShoppingCart />
+              </button>
+            </Link>
           </div>
         </div>
       </div>

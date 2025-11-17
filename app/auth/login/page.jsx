@@ -1,15 +1,78 @@
-"use client";
+'use client';
 
 import { AuthHeader } from "../../components/auth/AuthHeader";
 import { AuthForm } from "../../components/auth/AuthForm";
+import { useState } from "react";
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function LoginPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
   const handleLogin = async (formData) => {
     console.log("Login attempt:", formData);
+    
+    setIsLoading(true);
+    setError("");
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch('https://api.freeapi.app/api/v1/users/login', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
 
-    alert("Login successful! In a real app, this would redirect to dashboard.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || data.details || 'Login failed');
+      }
+
+      console.log("Login successful:", data);
+      
+      // Store in COOKIES (not localStorage) to match useAuth hook
+      if (data.data) {
+        const userData = data.data;
+        
+        // Store user data in cookies
+        Cookies.set('user', JSON.stringify({
+          id: userData.id,
+          username: userData.username,
+          email: userData.email,
+          role: userData.role,
+        }), { expires: 0.5 }); // 12 hours
+
+        // Store access token in cookies
+        if (data.data?.accessToken) {
+          Cookies.set('accessToken', data.data.accessToken, { expires: 0.5 });
+        }
+
+        // Store refresh token in cookies
+        if (data.data?.refreshToken) {
+          Cookies.set('refreshToken', data.data.refreshToken, { expires: 7 });
+        }
+      }
+
+      console.log("Redirecting to dashboard...");
+      
+      // Use setTimeout to ensure cookies are set before redirect
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 100);
+      
+    } catch (error) {
+      console.error("Login error:", error);
+      setError(error.message || "Login failed. Please check your credentials and try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -28,7 +91,17 @@ export default function LoginPage() {
           </div>
 
           <div className="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
-            <AuthForm type="login" onSubmit={handleLogin} />
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {error}
+              </div>
+            )}
+
+            <AuthForm 
+              type="login" 
+              onSubmit={handleLogin}
+              isLoading={isLoading}
+            />
 
             <div className="mt-6">
               <div className="relative">

@@ -4,13 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 
 export function AuthForm({ type = "login", onSubmit }) {
+  const isLogin = type === "login";
+  
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
+    ...(isLogin ? {} : { email: "" }), 
     password: "",
-    firstName: "",
-    lastName: "",
-    confirmPassword: ""
+    ...(isLogin ? {} : { confirmPassword: "" })
   });
+  
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -33,61 +35,45 @@ export function AuthForm({ type = "login", onSubmit }) {
     }
   };
 
-  const isLogin = type === "login";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {!isLogin && (
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-              First Name
-            </label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              required={!isLogin}
-              value={formData.firstName}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
-              placeholder="John"
-            />
-          </div>
-          <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-              Last Name
-            </label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              required={!isLogin}
-              value={formData.lastName}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
-              placeholder="Doe"
-            />
-          </div>
-        </div>
-      )}
-
+      {/* Username Field - Show for both login and register */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-          Email Address
+        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+          Username
         </label>
         <input
-          id="email"
-          name="email"
-          type="email"
+          id="username"
+          name="username"
+          type="text"
           required
-          value={formData.email}
+          value={formData.username}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
-          placeholder="you@example.com"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 focus:outline-none"
+          placeholder="Enter your username"
         />
       </div>
 
+      {/* Email Field - ONLY show for register */}
+      {!isLogin && (
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            Email Address
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required={!isLogin}
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 focus:outline-none"
+            placeholder="Enter your email"
+          />
+        </div>
+      )}
+
+      {/* Password Field - Show for both */}
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
           Password
@@ -99,12 +85,13 @@ export function AuthForm({ type = "login", onSubmit }) {
           required
           value={formData.password}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 focus:outline-none"
           placeholder="••••••••"
           minLength={6}
         />
       </div>
 
+      {/* Confirm Password Field - ONLY show for register */}
       {!isLogin && (
         <div>
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
@@ -117,7 +104,7 @@ export function AuthForm({ type = "login", onSubmit }) {
             required={!isLogin}
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 focus:outline-none"
             placeholder="••••••••"
             minLength={6}
           />
@@ -157,7 +144,7 @@ export function AuthForm({ type = "login", onSubmit }) {
       {isLogin && (
         <div className="text-center">
           <span className="text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
+            Don't have an account?{" "}
             <Link href="/auth/register" className="text-purple-600 hover:text-purple-500 font-medium">
               Sign up
             </Link>

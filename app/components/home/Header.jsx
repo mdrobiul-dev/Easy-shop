@@ -1,3 +1,4 @@
+import { Search, User, ShoppingCart   } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react'
 
@@ -59,33 +60,31 @@ const Header = ({cartCount}) => {
                   placeholder="Search products..."
                   className="pl-4 pr-10 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-64"
                 />
-                <button className="absolute right-3 top-2 text-gray-500 hover:text-purple-600">
-                  🔍
+                <button className="absolute right-3 top-2 text-gray-500 hover:text-purple-600 cursor-pointer">
+                  <Search />
                 </button>
               </div>
 
-              {/* Icons - UPDATED SECTION */}
               <div className="flex items-center space-x-4">
-                <button className="text-gray-700 hover:text-purple-600">
-                  🔍
-                </button>
                 
-                {/* Replace the user icon with actual auth links */}
-                <Link href="/auth/login" className="text-gray-700 hover:text-purple-600">
-                  👤
+            
+                <Link href="/auth/login" className="text-gray-700 hover:text-purple-600 cursor-pointer">
+                  <User />
                 </Link>
                 
-                <button className="text-gray-700 hover:text-purple-600 relative">
-                  🛒
+               <Link href="/cart">
+                     <button className="text-gray-700 hover:text-purple-600 relative cursor-pointer">
+                   <ShoppingCart />
                   {cartCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
                       {cartCount}
                     </span>
                   )}
                 </button>
+               </Link>
               </div>
 
-              {/* Mobile Menu Button */}
+             
               <button
                 className="md:hidden text-gray-700"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -129,7 +128,7 @@ const Header = ({cartCount}) => {
                 >
                   Contact
                 </Link>
-                {/* Add auth links to mobile menu too */}
+         
                 <Link
                   href="/auth/login"
                   className="text-gray-700 hover:text-purple-600 font-medium"
@@ -143,7 +142,7 @@ const Header = ({cartCount}) => {
                     className="w-full pl-4 pr-10 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                   <button className="absolute right-3 top-2 text-gray-500">
-                    🔍
+                  <Search />
                   </button>
                 </div>
               </div>
