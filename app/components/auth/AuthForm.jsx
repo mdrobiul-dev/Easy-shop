@@ -2,34 +2,80 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export function AuthForm({ type = "login", onSubmit }) {
+export function AuthForm({ type = "login" }) {
   const isLogin = type === "login";
   
   const [formData, setFormData] = useState({
     username: "",
-    ...(isLogin ? {} : { email: "" }), 
+    email: "",
     password: "",
-    ...(isLogin ? {} : { confirmPassword: "" })
+    role: "USER"
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+   
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+    setError("");
+
     try {
-      await onSubmit(formData);
+      let apiUrl, requestBody;
+
+      if (type === "login") {
+        apiUrl = "https://api.freeapi.app/api/v1/users/login";
+        requestBody = {
+          username: formData.username,
+          password: formData.password
+        };
+      } else {
+        apiUrl = "https://api.freeapi.app/api/v1/users/register";
+        requestBody = {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role
+        };
+      }
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        if (type === "login") {
+          alert("Login successful! Redirecting...");
+          router.push("/");
+          router.refresh();
+        } else {
+          alert("Registration successful! Please login.");
+          router.push("/auth/login");
+        }
+      } else {
+        throw new Error(data.message || `Failed to ${type}`);
+      }
     } catch (error) {
       console.error('Auth error:', error);
+      setError(error.message || `Something went wrong during ${type}`);
     } finally {
       setIsLoading(false);
     }
@@ -37,6 +83,13 @@ export function AuthForm({ type = "login", onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
+
       {/* Username Field - Show for both login and register */}
       <div>
         <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
@@ -64,11 +117,11 @@ export function AuthForm({ type = "login", onSubmit }) {
             id="email"
             name="email"
             type="email"
-            required={!isLogin}
+            required
             value={formData.email}
             onChange={handleChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 focus:outline-none"
-            placeholder="Enter your email"
+            placeholder="you@example.com"
           />
         </div>
       )}
@@ -91,26 +144,26 @@ export function AuthForm({ type = "login", onSubmit }) {
         />
       </div>
 
-      {/* Confirm Password Field - ONLY show for register */}
+      {/* Role Field - ONLY show for register */}
       {!isLogin && (
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-            Confirm Password
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+            Role
           </label>
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            required={!isLogin}
-            value={formData.confirmPassword}
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
             onChange={handleChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200 focus:outline-none"
-            placeholder="••••••••"
-            minLength={6}
-          />
+          >
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+          </select>
         </div>
       )}
 
+      {/* Remember me and Forgot Password - ONLY show for login */}
       {isLogin && (
         <div className="flex items-center justify-between">
           <label className="flex items-center">
@@ -126,6 +179,7 @@ export function AuthForm({ type = "login", onSubmit }) {
         </div>
       )}
 
+      {/* Submit Button */}
       <button
         type="submit"
         disabled={isLoading}
@@ -141,27 +195,18 @@ export function AuthForm({ type = "login", onSubmit }) {
         )}
       </button>
 
-      {isLogin && (
-        <div className="text-center">
-          <span className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link href="/auth/register" className="text-purple-600 hover:text-purple-500 font-medium">
-              Sign up
-            </Link>
-          </span>
-        </div>
-      )}
-
-      {!isLogin && (
-        <div className="text-center">
-          <span className="text-sm text-gray-600">
-            Already have an account?{" "}
-            <Link href="/auth/login" className="text-purple-600 hover:text-purple-500 font-medium">
-              Sign in
-            </Link>
-          </span>
-        </div>
-      )}
+      {/* Switch between Login and Register links */}
+      <div className="text-center">
+        <span className="text-sm text-gray-600">
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <Link 
+            href={isLogin ? "/auth/register" : "/auth/login"} 
+            className="text-purple-600 hover:text-purple-500 font-medium"
+          >
+            {isLogin ? "Sign up" : "Sign in"}
+          </Link>
+        </span>
+      </div>
     </form>
   );
 }

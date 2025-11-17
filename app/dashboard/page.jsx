@@ -325,7 +325,7 @@ function InfoRow({ label, value, badge }) {
   );
 }
 
-// Component for quick actions
+
 function QuickAction({ icon, label }) {
   return (
     <button className="w-full flex items-center space-x-3 p-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
