@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,71 +14,18 @@ import {
   Heart
 } from 'lucide-react';
 import Link from 'next/link';
+import { useCart } from '@/app/context/CartContext'; 
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
+  const { cartItems, updateQuantity, removeFromCart, getCartTotal } = useCart(); // Use cart context
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Mock cart data - replace with actual API call
+  // Remove mock data useEffect - we're using real cart data now
   useEffect(() => {
-    const mockCartItems = [
-      {
-        id: 1,
-        name: 'Wireless Bluetooth Headphones',
-        price: 129.99,
-        originalPrice: 159.99,
-        quantity: 1,
-        image: '/api/placeholder/120/120',
-        category: 'Electronics',
-        inStock: true,
-        maxQuantity: 5
-      },
-      {
-        id: 2,
-        name: 'Premium Cotton T-Shirt',
-        price: 29.99,
-        originalPrice: 39.99,
-        quantity: 2,
-        image: '/api/placeholder/120/120',
-        category: 'Clothing',
-        inStock: true,
-        maxQuantity: 10,
-        size: 'M',
-        color: 'Black'
-      },
-      {
-        id: 3,
-        name: 'Smart Fitness Watch',
-        price: 199.99,
-        originalPrice: 249.99,
-        quantity: 1,
-        image: '/api/placeholder/120/120',
-        category: 'Electronics',
-        inStock: true,
-        maxQuantity: 3
-      }
-    ];
-    
-    setCartItems(mockCartItems);
-    setIsLoading(false);
+    // Simulate loading if needed, or remove if not necessary
+    setTimeout(() => setIsLoading(false), 500);
   }, []);
-
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === id 
-          ? { ...item, quantity: Math.min(newQuantity, item.maxQuantity) }
-          : item
-      )
-    );
-  };
-
-  const removeItem = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
-  };
 
   const moveToWishlist = (id) => {
     // Implement move to wishlist logic
@@ -86,7 +33,7 @@ export default function CartPage() {
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return getCartTotal();
   };
 
   const calculateDiscount = () => {
@@ -125,13 +72,12 @@ export default function CartPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-         <Link href="/allproducts">
-          <button 
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Continue Shopping
-          </button></Link>
+          <Link href="/allproducts">
+            <button className="flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors">
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Continue Shopping
+            </button>
+          </Link>
           
           <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
           <p className="text-gray-600 mt-2">
@@ -150,7 +96,7 @@ export default function CartPage() {
               Looks like you haven't added any items to your cart yet. Start shopping to discover amazing products!
             </p>
             <button
-              onClick={() => router.push('/products')}
+              onClick={() => router.push('/allproducts')}
               className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
               Start Shopping
@@ -178,7 +124,7 @@ export default function CartPage() {
                       key={item.id}
                       item={item}
                       onUpdateQuantity={updateQuantity}
-                      onRemove={removeItem}
+                      onRemove={removeFromCart}
                       onMoveToWishlist={moveToWishlist}
                     />
                   ))}
@@ -255,7 +201,7 @@ export default function CartPage() {
 
                 {/* Continue Shopping */}
                 <button
-                  onClick={() => router.push('/products')}
+                  onClick={() => router.push('/allproducts')}
                   className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
                   Continue Shopping

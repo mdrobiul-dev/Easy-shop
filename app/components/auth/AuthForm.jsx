@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
 
 export function AuthForm({ type = "login" }) {
   const isLogin = type === "login";
@@ -63,9 +64,37 @@ export function AuthForm({ type = "login" }) {
 
       if (response.ok && data.success) {
         if (type === "login") {
-          alert("Login successful! Redirecting...");
-          router.push("/");
-          router.refresh();
+          // Store user data and tokens in cookies
+          if (data.data) {
+            const userData = data.data;
+            
+            // Store user data in cookies
+            Cookies.set('user', JSON.stringify({
+              id: userData.id,
+              username: userData.username,
+              email: userData.email,
+              role: userData.role,
+            }), { expires: 0.5 }); // 12 hours
+
+            // Store access token in cookies
+            if (data.data?.accessToken) {
+              Cookies.set('accessToken', data.data.accessToken, { expires: 0.5 });
+            }
+
+            // Store refresh token in cookies
+            if (data.data?.refreshToken) {
+              Cookies.set('refreshToken', data.data.refreshToken, { expires: 7 });
+            }
+          }
+
+          console.log("Login successful! Redirecting to dashboard...");
+          
+          // Use setTimeout to ensure cookies are set before redirect
+          setTimeout(() => {
+            router.push('/dashboard');
+            router.refresh();
+          }, 100);
+          
         } else {
           alert("Registration successful! Please login.");
           router.push("/auth/login");

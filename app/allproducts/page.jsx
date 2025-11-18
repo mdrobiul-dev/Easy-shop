@@ -1,7 +1,7 @@
-import { Search, User, ShoppingCart } from "lucide-react";
 import { Suspense } from "react";
 import Link from "next/link";
 import { ProductsPageContent } from "../components/all product/ProductsPageContent";
+import Header from "../components/home/Header"; // Import your main Header component
 
 async function getProducts(limit = 20) {
   try {
@@ -41,6 +41,7 @@ export default async function ProductsPage({ searchParams }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Use your main Header component that has cart count */}
       <Header />
       <Breadcrumb />
 
@@ -63,6 +64,7 @@ function PageHeader({ limit }) {
   return (
     <div className="text-center mb-4">
       <h1 className="text-4xl font-bold text-gray-900 mb-2">All Products</h1>
+      <p className="text-gray-600">Discover our amazing collection of products</p>
     </div>
   );
 }
@@ -102,61 +104,6 @@ function ProductsLoadingSkeleton() {
         </div>
       </div>
     </div>
-  );
-}
-
-function Header() {
-  return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <Link href="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-purple-600">
-              Shop<span className="text-purple-800">Easy</span>
-            </h1>
-          </Link>
-          <nav className="hidden md:flex space-x-8">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-purple-600 font-medium"
-            >
-              Home
-            </Link>
-            <Link href="/allproducts" className="text-purple-600 font-medium">
-              Products
-            </Link>
-            <Link
-              href="/categories"
-              className="text-gray-700 hover:text-purple-600 font-medium"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/deals"
-              className="text-gray-700 hover:text-purple-600 font-medium"
-            >
-              Deals
-            </Link>
-          </nav>
-          <div className="flex items-center space-x-4">
-            <button className="text-gray-700 hover:text-purple-600">
-              <Search />
-            </button>
-
-            <Link href="/auth/login">
-              <button className="text-gray-700 hover:text-purple-600">
-                <User />
-              </button>
-            </Link>
-            <Link href="/cart">
-              <button className="text-gray-700 hover:text-purple-600 relative">
-                <ShoppingCart />
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </header>
   );
 }
 

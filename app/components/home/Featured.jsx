@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { featuredProducts } from "@/app/data/data";
+import { useCart } from "@/app/context/CartContext";
 
 async function getProduct() {
   try {
@@ -20,8 +21,9 @@ async function getProduct() {
   }
 }
 
-const Featured = ({ addToCart }) => {
+const Featured = () => {
   const [fetchedData, setFetchedData] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function load() {
@@ -31,7 +33,25 @@ const Featured = ({ addToCart }) => {
     load();
   }, []);
 
-  console.log(fetchedData);
+ 
+  const handleAddToCart = (product) => {
+  
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: parseFloat(product.price.replace('$', '')), 
+      originalPrice: parseFloat(product.price.replace('$', '')) * 1.2,
+      image: product.image,
+      category: product.category,
+      inStock: true,
+      maxQuantity: 10
+    };
+    
+    addToCart(cartItem);
+    
+ 
+    // alert(`${product.name} added to cart!`);
+  };
 
   return (
     <section className="py-16 bg-white">
@@ -73,7 +93,7 @@ const Featured = ({ addToCart }) => {
                     {product.price}
                   </span>
                   <button
-                    onClick={addToCart}
+                    onClick={() => handleAddToCart(product)}
                     className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-300"
                   >
                     Add to Cart
@@ -83,7 +103,6 @@ const Featured = ({ addToCart }) => {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );

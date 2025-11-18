@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 const Hero = () => {
   return (
     <section className="bg-linear-to-r bg-[url('/images/banner.jpg')] bg-cover bg-position-[center_20%] bg-no-repeat  text-white py-30">
@@ -9,9 +11,10 @@ const Hero = () => {
               out!
             </p>
             <div className="flex space-x-4">
+             <Link href="/allproducts">
               <button className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-purple-50 transition duration-300">
                 Shop Now
-              </button>
+              </button></Link>
               <button className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition duration-300">
                 Learn More
               </button>
