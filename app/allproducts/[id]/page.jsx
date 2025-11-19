@@ -1,8 +1,8 @@
-import { Search, User, ShoppingCart } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductDetailsContent } from "../../components/product-details/ProductDetailsContent";
 import Link from "next/link";
+import Header from "../../components/home/Header"; 
 
 async function getProduct(id) {
   try {
@@ -75,61 +75,6 @@ export default async function ProductDetailsPage({ params }) {
         </Suspense>
       </div>
     </div>
-  );
-}
-
-function Header() {
-  return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          <Link href="/" className="flex items-center">
-            <h1 className="text-2xl font-bold text-purple-600">
-              Shop<span className="text-purple-800">Easy</span>
-            </h1>
-          </Link>
-          <nav className="hidden md:flex space-x-8">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-purple-600 font-medium"
-            >
-              Home
-            </Link>
-            <Link href="/allproducts" className="text-purple-600 font-medium">
-              Products
-            </Link>
-            <Link
-              href="/categories"
-              className="text-gray-700 hover:text-purple-600 font-medium"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/deals"
-              className="text-gray-700 hover:text-purple-600 font-medium"
-            >
-              Deals
-            </Link>
-          </nav>
-          <div className="flex items-center space-x-4">
-            <button className="text-gray-700 hover:text-purple-600">
-              {" "}
-              <Search />
-            </button>
-            <Link href="/auth/login">
-              <button className="text-gray-700 hover:text-purple-600">
-                <User />
-              </button>
-            </Link>
-            <Link href="/cart">
-              <button className="text-gray-700 hover:text-purple-600 relative">
-                <ShoppingCart />
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </header>
   );
 }
 

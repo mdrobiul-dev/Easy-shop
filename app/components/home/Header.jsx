@@ -63,7 +63,7 @@ const Header = () => {
                 className="pl-4 pr-10 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-64"
               />
               <button className="absolute right-3 top-2 text-gray-500 hover:text-purple-600 cursor-pointer">
-                <Search size={20} />
+                <Search size={25} />
               </button>
             </div>
 
@@ -120,15 +120,14 @@ const Header = () => {
                   href="/auth/login" 
                   className="text-gray-700 hover:text-purple-600 cursor-pointer flex items-center space-x-1"
                 >
-                  <User size={20} />
-                  <span className="hidden md:block">Sign In</span>
+                  <User size={25} />
                 </Link>
               )}
               
               {/* Cart */}
               <Link href="/cart">
-                <button className="text-gray-700 hover:text-purple-600 relative cursor-pointer">
-                  <ShoppingCart size={20} />
+                <button className="text-gray-700 hover:text-purple-600 relative cursor-pointer pt-2">
+                  <ShoppingCart size={25} />
                   {cartCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
                       {cartCount}

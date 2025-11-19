@@ -1,18 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { ProductFilters } from "./ProductFilters";
 import { ProductsGrid } from "./ProductsGrid";
 import { SortAndFilterBar } from "./SortAndFilterBar";
+import { Pagination } from "./Pagination";
 import { filterAndSortProducts } from "../../data/allproductsdata";
-import { useCart } from "../../context/CartContext"; // Import useCart
+import { useCart } from "../../context/CartContext";
 
 export function ProductsPageContent({
   initialProducts,
   categories,
   currentLimit = "20",
+  currentPage = 1,
+  totalPages = 1,
+  totalProducts = 0
 }) {
-  const [sortBy, setSortBy] = useState("featured");
+  const searchParams = useSearchParams();
+  const urlSort = searchParams.get('sort') || "featured";
+  
+  const [sortBy, setSortBy] = useState(urlSort);
   const [filters, setFilters] = useState({
     category: "all",
     priceRange: [0, 500],
@@ -20,7 +28,15 @@ export function ProductsPageContent({
   });
   const [showFilters, setShowFilters] = useState(false);
   
-  const { addToCart } = useCart(); // Get addToCart from context
+  const { addToCart } = useCart();
+
+  // Sync local state with URL params
+  useEffect(() => {
+    const urlSort = searchParams.get('sort');
+    if (urlSort && urlSort !== sortBy) {
+      setSortBy(urlSort);
+    }
+  }, [searchParams, sortBy]);
 
   const filteredProducts = filterAndSortProducts(
     initialProducts,
@@ -29,12 +45,11 @@ export function ProductsPageContent({
   );
 
   const handleAddToCart = (product) => {
-    // Format product data for cart
     const cartItem = {
       id: product.id,
       name: product.title,
       price: product.price,
-      originalPrice: product.price * 1.2, // Add 20% as original price
+      originalPrice: product.price * 1.2,
       image: product.thumbnail,
       category: product.category,
       inStock: product.stock > 0,
@@ -44,14 +59,17 @@ export function ProductsPageContent({
     };
     
     addToCart(cartItem);
-    // alert(`Added ${product.title} to cart!`);
+  };
+
+  const handleSortChange = (newSortBy) => {
+    setSortBy(newSortBy);
   };
 
   return (
     <>
       <SortAndFilterBar
         sortBy={sortBy}
-        onSortChange={setSortBy}
+        onSortChange={handleSortChange}
         productCount={filteredProducts.length}
         showFilters={showFilters}
         onToggleFilters={() => setShowFilters(!showFilters)}
@@ -72,7 +90,15 @@ export function ProductsPageContent({
         <div className="flex-1">
           <ProductsGrid 
             products={filteredProducts} 
-            onAddToCart={handleAddToCart} // Pass the updated function
+            onAddToCart={handleAddToCart}
+          />
+          
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalProducts={totalProducts}
+            limit={currentLimit}
           />
         </div>
       </div>
