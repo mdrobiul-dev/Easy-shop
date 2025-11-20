@@ -10,7 +10,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { user, logout } = useAuth();
-  const { cartCount } = useCart(); // Get cartCount from context
+  const { cartCount } = useCart(); 
 
   const handleLogout = async () => {
     await logout();
