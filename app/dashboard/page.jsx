@@ -12,9 +12,9 @@ import {
   Bell,
   Settings,
 } from "lucide-react";
-import LogoutButton from "../components/auth/LogoutButton"; // must be a client component
+import LogoutButton from "../components/auth/LogoutButton"; 
 
-// NOTE: this file is a Server Component (no "use client" at top)
+
 
 async function fetchUserFromApi(accessToken) {
   const res = await fetch("https://api.freeapi.app/api/v1/users/me", {
@@ -47,7 +47,7 @@ export default async function DashboardPage() {
   if (!user) {
     redirect("/auth/login");
   }
-  // server-side mock metrics / recent activity (move to real data later)
+ 
   const metrics = {
     totalRevenue: 12450.75,
     totalOrders: 342,
