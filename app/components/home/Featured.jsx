@@ -33,23 +33,20 @@ const Featured = () => {
     load();
   }, []);
 
- 
   const handleAddToCart = (product) => {
-  
     const cartItem = {
       id: product.id,
       name: product.name,
-      price: parseFloat(product.price.replace('$', '')), 
-      originalPrice: parseFloat(product.price.replace('$', '')) * 1.2,
+      price: parseFloat(product.price.replace("$", "")),
+      originalPrice: parseFloat(product.price.replace("$", "")) * 1.2,
       image: product.image,
       category: product.category,
       inStock: true,
-      maxQuantity: 10
+      maxQuantity: 10,
     };
-    
+
     addToCart(cartItem);
-    
- 
+
     // alert(`${product.name} added to cart!`);
   };
 
@@ -72,22 +69,22 @@ const Featured = () => {
               key={product.id}
               className="bg-gray-50 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition duration-300"
             >
-              <div className="h-48 bg-gray-200 overflow-hidden">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={500}
-                  height={500}
-                  className="w-full h-full object-cover hover:scale-105 transition duration-300"
-                />
-              </div>
+              <Link href="/allproducts">
+                <div className="h-48 bg-gray-200 overflow-hidden">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    width={500}
+                    height={500}
+                    className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                  />
+                </div>
+              </Link>
               <div className="p-4">
                 <span className="text-sm text-purple-600 font-medium">
                   {product.category}
                 </span>
-                <h3 className="text-lg font-semibold mt-1">
-                  {product.name}
-                </h3>
+                <h3 className="text-lg font-semibold mt-1">{product.name}</h3>
                 <div className="flex justify-between items-center mt-4">
                   <span className="text-xl font-bold text-gray-800">
                     {product.price}
@@ -109,4 +106,3 @@ const Featured = () => {
 };
 
 export default Featured;
-

@@ -1,19 +1,24 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ProductsPageContent } from "../components/all product/ProductsPageContent";
-import Header from "../components/home/Header"; // Import your main Header component
+import Header from "../components/home/Header"; 
 
-async function getProducts(limit = 20) {
+async function getProducts(limit = 20, skip = 0) {
   try {
-    const res = await fetch(`https://dummyjson.com/products?limit=${limit}`, {
+    const res = await fetch(`https://dummyjson.com/products?limit=${limit}&skip=${skip}`, {
       next: { revalidate: 3600 },
     });
     const data = await res.json();
 
-    return data.products || [];
+    return {
+      products: data.products || [],
+      total: data.total || 0,
+      skip: data.skip || 0,
+      limit: data.limit || 20
+    };
   } catch (error) {
     console.error("Error fetching products:", error);
-    return [];
+    return { products: [], total: 0, skip: 0, limit: 20 };
   }
 }
 
@@ -33,26 +38,37 @@ async function getCategories(products) {
 export default async function ProductsPage({ searchParams }) {
   const params = await searchParams;
   const limit = params.limit || "20";
+  const page = parseInt(params.page) || 1;
+  
 
-  const products = await getProducts(limit);
+  const skip = (page - 1) * parseInt(limit);
+
+  const { products, total } = await getProducts(limit, skip);
   const categories = await getCategories(products);
 
-  console.log(`Fetching ${limit} products`);
+
+  const totalPages = Math.ceil(total / parseInt(limit));
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Use your main Header component that has cart count */}
       <Header />
       <Breadcrumb />
 
       <div className="container mx-auto px-4 py-2">
-        <PageHeader />
+        <PageHeader 
+          totalProducts={total}
+          currentPage={page}
+          limit={limit}
+        />
 
         <Suspense fallback={<ProductsLoadingSkeleton />}>
           <ProductsPageContent
             initialProducts={products}
             categories={categories}
             currentLimit={limit}
+            currentPage={page}
+            totalPages={totalPages}
+            totalProducts={total}
           />
         </Suspense>
       </div>
@@ -60,11 +76,16 @@ export default async function ProductsPage({ searchParams }) {
   );
 }
 
-function PageHeader({ limit }) {
+function PageHeader({ totalProducts, currentPage, limit }) {
+  const startItem = (currentPage - 1) * parseInt(limit) + 1;
+  const endItem = Math.min(currentPage * parseInt(limit), totalProducts);
+
   return (
     <div className="text-center mb-4">
       <h1 className="text-4xl font-bold text-gray-900 mb-2">All Products</h1>
-      <p className="text-gray-600">Discover our amazing collection of products</p>
+      <p className="text-gray-600">
+        Showing {startItem}-{endItem} of {totalProducts} products
+      </p>
     </div>
   );
 }
