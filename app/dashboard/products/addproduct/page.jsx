@@ -1,16 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Package, Plus, X, Upload, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-
-// Mock categories data - you'll need to replace this with actual data from your backend
-const mockCategories = [
-  { _id: '1', name: 'Electronics' },
-  { _id: '2', name: 'Accessories' },
-  { _id: '3', name: 'Home' },
-  { _id: '4', name: 'Clothing' },
-];
 
 export default function AddProductPage({ onBack, onProductAdded }) {
   const [formData, setFormData] = useState({
@@ -26,6 +18,83 @@ export default function AddProductPage({ onBack, onProductAdded }) {
   const [additionalImages, setAdditionalImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+
+  // Refs for file inputs
+  const mainImageInputRef = useRef(null);
+  const additionalImagesInputRef = useRef(null);
+
+  // Function to reset the entire form
+  const resetForm = () => {
+    console.log('Resetting form...');
+    
+    // Reset form data
+    setFormData({
+      title: '',
+      description: '',
+      price: '',
+      category: '',
+      stock: '',
+      variants: [{ name: '', options: [{ value: '', additionalPrice: '' }] }]
+    });
+    
+    // Reset images
+    setMainImage(null);
+    setAdditionalImages([]);
+    
+    // Reset errors
+    setErrors({});
+    
+    // Reset file inputs
+    if (mainImageInputRef.current) {
+      mainImageInputRef.current.value = '';
+    }
+    if (additionalImagesInputRef.current) {
+      additionalImagesInputRef.current.value = '';
+    }
+    
+    console.log('Form reset complete');
+  };
+
+  // Fetch categories from API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/v1/category/getcategory');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        
+        const result = await response.json();
+        
+        console.log('Categories API Response:', result);
+        
+        // Handle the categories API response structure
+        if (result.success && Array.isArray(result.data)) {
+          setCategories(result.data);
+        } else if (Array.isArray(result)) {
+          setCategories(result);
+        } else if (result.categories && Array.isArray(result.categories)) {
+          setCategories(result.categories);
+        } else {
+          console.error('Unexpected categories API response structure:', result);
+          setCategories([]);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setErrors(prev => ({ ...prev, categories: 'Failed to load categories' }));
+        setCategories([]);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Add all the missing functions here:
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +113,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
       const updatedVariants = [...prev.variants];
       updatedVariants[variantIndex] = {
         ...updatedVariants[variantIndex],
-        [field]: value.toLowerCase() // Convert to lowercase as per backend enum
+        [field]: value.toLowerCase()
       };
       return { ...prev, variants: updatedVariants };
     });
@@ -108,10 +177,15 @@ export default function AddProductPage({ onBack, onProductAdded }) {
   const handleMainImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
         setErrors(prev => ({ ...prev, mainImg: 'Please select a valid image (JPEG, PNG, WebP)' }));
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors(prev => ({ ...prev, mainImg: 'Image size must be less than 5MB' }));
         return;
       }
       
@@ -124,10 +198,21 @@ export default function AddProductPage({ onBack, onProductAdded }) {
     const files = Array.from(e.target.files);
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     
-    const validFiles = files.filter(file => allowedTypes.includes(file.type));
+    const validFiles = files.filter(file => {
+      if (!allowedTypes.includes(file.type)) {
+        return false;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        return false;
+      }
+      return true;
+    });
     
     if (validFiles.length !== files.length) {
-      setErrors(prev => ({ ...prev, images: 'Some files were skipped. Only JPEG, PNG, and WebP are allowed.' }));
+      setErrors(prev => ({ 
+        ...prev, 
+        images: 'Some files were skipped. Only JPEG, PNG, and WebP files under 5MB are allowed.' 
+      }));
     } else {
       setErrors(prev => ({ ...prev, images: '' }));
     }
@@ -179,11 +264,15 @@ export default function AddProductPage({ onBack, onProductAdded }) {
 
     try {
       const formDataToSend = new FormData();
+      
+      // Append basic product data
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', formData.price);
       formDataToSend.append('category', formData.category);
       formDataToSend.append('stock', formData.stock);
+      
+      // Append variants as JSON string
       formDataToSend.append('variants', JSON.stringify(formData.variants));
       
       // Append main image
@@ -194,22 +283,43 @@ export default function AddProductPage({ onBack, onProductAdded }) {
         formDataToSend.append('images', image);
       });
 
-      const response = await fetch('/api/products', {
+      console.log('Submitting form data:', {
+        title: formData.title,
+        category: formData.category,
+        price: formData.price,
+        stock: formData.stock,
+        variants: formData.variants
+      });
+
+      // Send to your product creation API
+      const response = await fetch('http://localhost:5000/api/v1/product/creatproduct', {
         method: 'POST',
         body: formDataToSend,
       });
 
       const result = await response.json();
+      console.log('API Response:', result);
 
-      if (response.ok) {
-        alert('Product created successfully!');
+      if (response.ok && result.success) {
+        console.log('Product created successfully, resetting form...');
+        
+        // Reset the entire form - THIS SHOULD HAPPEN AUTOMATICALLY
+        resetForm();
+        
+        // Call callback functions if provided
         if (onProductAdded) onProductAdded();
         if (onBack) onBack();
       } else {
-        setErrors({ submit: result.error || 'Failed to create product' });
+        console.log('Product creation failed:', result);
+        setErrors({ 
+          submit: result.message || result.error || 'Failed to create product' 
+        });
       }
     } catch (error) {
-      setErrors({ submit: 'Network error. Please try again.' });
+      console.error('Error creating product:', error);
+      setErrors({ 
+        submit: 'Network error. Please check your connection and try again.' 
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -223,11 +333,23 @@ export default function AddProductPage({ onBack, onProductAdded }) {
           <h1 className="text-2xl font-bold text-gray-900">Add New Product</h1>
           <p className="text-gray-600">Create a new product listing</p>
         </div>
-        <Link href="/dashboard/products"
-          className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-        >
-          Back to Products
-        </Link>
+        <div className="flex gap-2">
+          {/* Optional: Add a reset button */}
+          <button
+            type="button"
+            onClick={resetForm}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <X className="h-4 w-4" />
+            Reset Form
+          </button>
+          <Link 
+            href="/dashboard/products"
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            Back to Products
+          </Link>
+        </div>
       </div>
 
       {/* Product Form */}
@@ -244,8 +366,8 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                  errors.title ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-3 py-2 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-colors ${
+                  errors.title ? 'ring-2 ring-red-500' : ''
                 }`}
                 placeholder="Enter product title"
               />
@@ -260,17 +382,19 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                  errors.category ? 'border-red-500' : 'border-gray-300'
-                }`}
+                disabled={isLoadingCategories}
+                className={`w-full px-3 py-2 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-colors ${
+                  errors.category ? 'ring-2 ring-red-500' : ''
+                } ${isLoadingCategories ? 'cursor-not-allowed opacity-50' : ''}`}
               >
-                <option value="">Select a category</option>
-                {mockCategories.map(category => (
+                <option value="">{isLoadingCategories ? 'Loading categories...' : 'Select a category'}</option>
+                {categories.map(category => (
                   <option key={category._id} value={category._id}>
                     {category.name}
                   </option>
                 ))}
               </select>
+              {errors.categories && <p className="mt-1 text-sm text-red-600">{errors.categories}</p>}
               {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category}</p>}
             </div>
 
@@ -281,11 +405,12 @@ export default function AddProductPage({ onBack, onProductAdded }) {
               <input
                 type="number"
                 step="0.01"
+                min="0.01"
                 name="price"
                 value={formData.price}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                  errors.price ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-3 py-2 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-colors ${
+                  errors.price ? 'ring-2 ring-red-500' : ''
                 }`}
                 placeholder="0.00"
               />
@@ -298,11 +423,12 @@ export default function AddProductPage({ onBack, onProductAdded }) {
               </label>
               <input
                 type="number"
+                min="1"
                 name="stock"
                 value={formData.stock}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                  errors.stock ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-3 py-2 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-colors ${
+                  errors.stock ? 'ring-2 ring-red-500' : ''
                 }`}
                 placeholder="0"
               />
@@ -320,8 +446,8 @@ export default function AddProductPage({ onBack, onProductAdded }) {
               value={formData.description}
               onChange={handleInputChange}
               rows={4}
-              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-3 py-2 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-colors ${
+                errors.description ? 'ring-2 ring-red-500' : ''
               }`}
               placeholder="Enter product description"
             />
@@ -335,7 +461,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                 Main Image *
               </label>
               <div className="flex items-center gap-4">
-                <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors">
+                <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors bg-gray-50 hover:bg-gray-100">
                   <Upload className="h-8 w-8 text-gray-400" />
                   <span className="mt-2 text-sm text-gray-600">Upload</span>
                   <input
@@ -343,6 +469,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                     className="hidden"
                     accept="image/jpeg,image/png,image/webp"
                     onChange={handleMainImageChange}
+                    ref={mainImageInputRef}
                   />
                 </label>
                 {mainImage && (
@@ -355,7 +482,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                     <button
                       type="button"
                       onClick={() => setMainImage(null)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -370,7 +497,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                 Additional Images
               </label>
               <div className="flex flex-wrap gap-4">
-                <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors">
+                <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-purple-500 transition-colors bg-gray-50 hover:bg-gray-100">
                   <Upload className="h-6 w-6 text-gray-400" />
                   <span className="mt-1 text-xs text-gray-600">Add More</span>
                   <input
@@ -379,6 +506,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                     className="hidden"
                     accept="image/jpeg,image/png,image/webp"
                     onChange={handleAdditionalImagesChange}
+                    ref={additionalImagesInputRef}
                   />
                 </label>
                 {additionalImages.map((image, index) => (
@@ -391,7 +519,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                     <button
                       type="button"
                       onClick={() => removeAdditionalImage(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -409,7 +537,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
               <button
                 type="button"
                 onClick={addVariant}
-                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg flex items-center gap-2 transition-colors text-sm"
+                className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg flex items-center gap-2 transition-colors text-sm"
               >
                 <Plus className="h-4 w-4" />
                 Add Variant
@@ -417,14 +545,14 @@ export default function AddProductPage({ onBack, onProductAdded }) {
             </div>
 
             {formData.variants.map((variant, variantIndex) => (
-              <div key={variantIndex} className="p-4 border border-gray-200 rounded-lg space-y-4">
+              <div key={variantIndex} className="p-4 border border-gray-200 rounded-lg space-y-4 bg-gray-50">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-gray-900">Variant {variantIndex + 1}</h4>
                   {formData.variants.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeVariant(variantIndex)}
-                      className="text-red-600 hover:text-red-800 transition-colors"
+                      className="text-red-500 hover:text-red-700 transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -439,8 +567,8 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                     <select
                       value={variant.name}
                       onChange={(e) => handleVariantChange(variantIndex, 'name', e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                        errors[`variant-${variantIndex}-name`] ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-3 py-2 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
+                        errors[`variant-${variantIndex}-name`] ? 'ring-2 ring-red-500' : ''
                       }`}
                     >
                       <option value="">Select type</option>
@@ -459,7 +587,7 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                     <button
                       type="button"
                       onClick={() => addOption(variantIndex)}
-                      className="text-purple-600 hover:text-purple-800 text-sm flex items-center gap-1"
+                      className="text-purple-600 hover:text-purple-800 text-sm flex items-center gap-1 transition-colors"
                     >
                       <Plus className="h-3 w-3" />
                       Add Option
@@ -474,8 +602,8 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                           placeholder="Option value (e.g., Red, Large)"
                           value={option.value}
                           onChange={(e) => handleOptionChange(variantIndex, optionIndex, 'value', e.target.value)}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
-                            errors[`variant-${variantIndex}-option-${optionIndex}-value`] ? 'border-red-500' : 'border-gray-300'
+                          className={`w-full px-3 py-2 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
+                            errors[`variant-${variantIndex}-option-${optionIndex}-value`] ? 'ring-2 ring-red-500' : ''
                           }`}
                         />
                         {errors[`variant-${variantIndex}-option-${optionIndex}-value`] && (
@@ -486,17 +614,18 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                         <input
                           type="number"
                           step="0.01"
+                          min="0"
                           placeholder="Extra price"
                           value={option.additionalPrice}
                           onChange={(e) => handleOptionChange(variantIndex, optionIndex, 'additionalPrice', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          className="w-full px-3 py-2 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
                         />
                       </div>
                       {variant.options.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeOption(variantIndex, optionIndex)}
-                          className="text-red-600 hover:text-red-800 transition-colors"
+                          className="text-red-500 hover:text-red-700 transition-colors"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -512,13 +641,13 @@ export default function AddProductPage({ onBack, onProductAdded }) {
           <div className="flex gap-3 pt-6">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingCategories}
               className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  Creating...
+                  Creating Product...
                 </>
               ) : (
                 <>
@@ -527,13 +656,12 @@ export default function AddProductPage({ onBack, onProductAdded }) {
                 </>
               )}
             </button>
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-lg transition-colors"
+            <Link
+              href="/dashboard/products"
+              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-4 rounded-lg transition-colors text-center"
             >
               Cancel
-            </button>
+            </Link>
           </div>
 
           {errors.submit && (

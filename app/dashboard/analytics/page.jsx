@@ -9,7 +9,6 @@ import {
   Eye,
   Download,
   Filter,
-  Calendar,
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
@@ -135,7 +134,7 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-gray-900 bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text">
             Analytics Dashboard
           </h1>
           <p className="text-gray-600 mt-2">Real-time insights and performance metrics</p>
@@ -156,7 +155,7 @@ export default function AnalyticsPage() {
             <Filter className="h-4 w-4" />
             Filters
           </button>
-          <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 flex items-center gap-2 transition-all duration-200 shadow-lg shadow-purple-500/25">
+          <button className="px-4 py-2 bg-linear-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 flex items-center gap-2 transition-all duration-200 shadow-lg shadow-purple-500/25">
             <Download className="h-4 w-4" />
             Export
           </button>
@@ -183,7 +182,7 @@ export default function AnalyticsPage() {
             <div className="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all duration-1000 ${
-                  kpi.trend === 'up' ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-red-500 to-orange-500'
+                  kpi.trend === 'up' ? 'bg-linear-to-r from-green-500 to-emerald-500' : 'bg-linear-to-r from-red-500 to-orange-500'
                 }`}
                 style={{ width: kpi.trend === 'up' ? '75%' : '45%' }}
               ></div>
@@ -370,7 +369,7 @@ export default function AnalyticsPage() {
               </div>
             ))}
           </div>
-          <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-100">
+          <div className="mt-6 p-4 bg-linear-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-100">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Eye className="h-4 w-4 text-purple-600" />
@@ -386,22 +385,22 @@ export default function AnalyticsPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-purple-500 to-blue-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Sessions</p>
           <p className="text-xl font-bold">24.8K</p>
           <p className="text-xs opacity-75">+12.4% from last week</p>
         </div>
-        <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-green-500 to-emerald-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Bounce Rate</p>
           <p className="text-xl font-bold">42.3%</p>
           <p className="text-xs opacity-75">-2.1% from last week</p>
         </div>
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Avg. Session</p>
           <p className="text-xl font-bold">4m 12s</p>
           <p className="text-xs opacity-75">+0.8% from last week</p>
         </div>
-        <div className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-pink-500 to-rose-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Goal Conv.</p>
           <p className="text-xl font-bold">8.2%</p>
           <p className="text-xs opacity-75">+1.5% from last week</p>
