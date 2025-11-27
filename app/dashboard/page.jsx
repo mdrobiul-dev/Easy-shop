@@ -4,7 +4,7 @@ import SalesChart from '../components/dashboard/SalesChart';
 import TopProducts from '../components/dashboard/TopProducts';
 import StoreHealth from '../components/dashboard/StoreHealth';
 
-// Mock data
+
 const statsData = {
   revenue: { value: 32450.75, change: 12.5, trend: 'up' },
   orders: { value: 1242, change: 8.2, trend: 'up' },

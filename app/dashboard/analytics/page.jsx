@@ -18,7 +18,7 @@ import {
   AreaChart, Area
 } from 'recharts';
 
-// Mock analytics data
+
 const analyticsData = {
   revenue: [
     { month: 'Jan', revenue: 4000, profit: 2400, orders: 240 },
@@ -55,7 +55,7 @@ const analyticsData = {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-// Custom Tooltip Components (declared outside)
+
 const RevenueTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -131,7 +131,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+   
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text">
@@ -162,7 +162,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
           <div key={index} className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all duration-300 group">
@@ -191,9 +191,9 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      {/* Main Charts Grid */}
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Revenue Chart - Full width on large screens */}
+     
         <div className="xl:col-span-2 bg-white rounded-2xl p-6 border border-gray-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Revenue & Performance</h3>
@@ -261,7 +261,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Traffic Sources Pie Chart */}
+      
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Traffic Sources</h3>
           <div className="h-64">
@@ -296,9 +296,9 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Bottom Charts Grid */}
+     
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Real-time Activity */}
+      
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Real-time Activity</h3>
@@ -341,7 +341,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Product Categories Performance */}
+     
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Product Categories</h3>
           <div className="space-y-4">
@@ -383,7 +383,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-linear-to-r from-purple-500 to-blue-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Sessions</p>
