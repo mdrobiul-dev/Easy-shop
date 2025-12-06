@@ -9,7 +9,6 @@ import {
   Eye,
   Download,
   Filter,
-  Calendar,
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
@@ -19,7 +18,7 @@ import {
   AreaChart, Area
 } from 'recharts';
 
-// Mock analytics data
+
 const analyticsData = {
   revenue: [
     { month: 'Jan', revenue: 4000, profit: 2400, orders: 240 },
@@ -56,7 +55,7 @@ const analyticsData = {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-// Custom Tooltip Components (declared outside)
+
 const RevenueTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -132,10 +131,10 @@ export default function AnalyticsPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+   
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-gray-900 bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text">
             Analytics Dashboard
           </h1>
           <p className="text-gray-600 mt-2">Real-time insights and performance metrics</p>
@@ -156,14 +155,14 @@ export default function AnalyticsPage() {
             <Filter className="h-4 w-4" />
             Filters
           </button>
-          <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 flex items-center gap-2 transition-all duration-200 shadow-lg shadow-purple-500/25">
+          <button className="px-4 py-2 bg-linear-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 flex items-center gap-2 transition-all duration-200 shadow-lg shadow-purple-500/25">
             <Download className="h-4 w-4" />
             Export
           </button>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
           <div key={index} className="bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-all duration-300 group">
@@ -183,7 +182,7 @@ export default function AnalyticsPage() {
             <div className="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all duration-1000 ${
-                  kpi.trend === 'up' ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-red-500 to-orange-500'
+                  kpi.trend === 'up' ? 'bg-linear-to-r from-green-500 to-emerald-500' : 'bg-linear-to-r from-red-500 to-orange-500'
                 }`}
                 style={{ width: kpi.trend === 'up' ? '75%' : '45%' }}
               ></div>
@@ -192,9 +191,9 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      {/* Main Charts Grid */}
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Revenue Chart - Full width on large screens */}
+     
         <div className="xl:col-span-2 bg-white rounded-2xl p-6 border border-gray-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Revenue & Performance</h3>
@@ -262,7 +261,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Traffic Sources Pie Chart */}
+      
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Traffic Sources</h3>
           <div className="h-64">
@@ -297,9 +296,9 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Bottom Charts Grid */}
+     
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Real-time Activity */}
+      
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Real-time Activity</h3>
@@ -342,7 +341,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Product Categories Performance */}
+     
         <div className="bg-white rounded-2xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Product Categories</h3>
           <div className="space-y-4">
@@ -370,7 +369,7 @@ export default function AnalyticsPage() {
               </div>
             ))}
           </div>
-          <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-100">
+          <div className="mt-6 p-4 bg-linear-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-100">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Eye className="h-4 w-4 text-purple-600" />
@@ -384,24 +383,23 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-purple-500 to-blue-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Sessions</p>
           <p className="text-xl font-bold">24.8K</p>
           <p className="text-xs opacity-75">+12.4% from last week</p>
         </div>
-        <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-green-500 to-emerald-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Bounce Rate</p>
           <p className="text-xl font-bold">42.3%</p>
           <p className="text-xs opacity-75">-2.1% from last week</p>
         </div>
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Avg. Session</p>
           <p className="text-xl font-bold">4m 12s</p>
           <p className="text-xs opacity-75">+0.8% from last week</p>
         </div>
-        <div className="bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl p-4 text-white">
+        <div className="bg-linear-to-r from-pink-500 to-rose-500 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-90">Goal Conv.</p>
           <p className="text-xl font-bold">8.2%</p>
           <p className="text-xs opacity-75">+1.5% from last week</p>
